@@ -1,6 +1,7 @@
 import jigeum.seoul
 from mnist.db import select, dml
 import random
+import os
 
 def get_job_img_task():
     sql = """
