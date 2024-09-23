@@ -17,7 +17,7 @@ async def create_file(file: Annotated[bytes, File()]):
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile):
     # 파일 저장
-    img = await file.read()
+    img = await filea9cbeec69f6b.read()
     file_name = file.filename
     file_ext = file.content_type.split('/')[-1]
     request_time = jigeum.seoul.now()  # 현재 시간을 포맷팅
@@ -40,7 +40,7 @@ async def create_upload_file(file: UploadFile):
     # 컬럼 정보 : 예측모델, 예측결과, 예측시간(추후 업데이트)
     
     conn = pymysql.connect(
-        host="172.18.0.1",
+        host="mnist-mariadb",
         user='mnist',
         password='1234',
         database='mnistdb',
