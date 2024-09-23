@@ -1,6 +1,6 @@
 [project]
 name = "mnist"
-version = "0.3.6"
+version = "0.3.7"
 description = "MNIST"
 authors = [
     {name = "DONGUK777", email = "kimdongyork@gmail.com"},

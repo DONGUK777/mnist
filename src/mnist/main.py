@@ -17,7 +17,7 @@ async def create_file(file: Annotated[bytes, File()]):
 @app.post("/uploadfile/")
 async def create_upload_file(file: UploadFile):
     # 파일 저장
-    img = await filea9cbeec69f6b.read()
+    img = await file.read()
     file_name = file.filename
     file_ext = file.content_type.split('/')[-1]
     request_time = jigeum.seoul.now()  # 현재 시간을 포맷팅
