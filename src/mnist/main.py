@@ -44,7 +44,7 @@ async def create_upload_file(file: UploadFile):
         user='mnist',
         password='1234',
         database='mnistdb',
-        port=int('53306'),
+        port=3306,
         cursorclass=pymysql.cursors.DictCursor
         )
 

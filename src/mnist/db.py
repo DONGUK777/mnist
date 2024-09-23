@@ -5,7 +5,7 @@ def get_conn():
                             user='mnist',
                             password='1234',
                             database='mnistdb',
-                            port=int(53306),
+                            port=3306,
                             cursorclass=pymysql.cursors.DictCursor)
 
     return conn
