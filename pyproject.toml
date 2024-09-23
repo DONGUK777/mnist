@@ -1,11 +1,16 @@
 [project]
 name = "mnist"
-version = "0.1.0"
+version = "0.2.0"
 description = "MNIST"
 authors = [
     {name = "DONGUK777", email = "kimdongyork@gmail.com"},
 ]
-dependencies = []
+dependencies = [
+    "fastapi>=0.114.1",
+    "uvicorn[standard]>=0.30.6",
+    "python-multipart>=0.0.9",
+    "jigeum>=1.0.2",
+]
 requires-python = ">=3.11"
 readme = "README.md"
 license = {text = "GNU"}
