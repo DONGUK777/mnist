@@ -39,7 +39,7 @@ async def create_upload_file(file: UploadFile):
     # 컬럼 정보 : 파일이름, 파일경로, 요청시간(초기 INSERT), 요청사용자(n00)
     # 컬럼 정보 : 예측모델, 예측결과, 예측시간(추후 업데이트)
     
-    connection = pymysql.connect(
+    conn = pymysql.connect(
         host="172.18.0.1",
         user='mnist',
         password='1234',
@@ -53,10 +53,10 @@ async def create_upload_file(file: UploadFile):
         VALUES (%s, %s, %s, %s)
     """
     
-    with connection:
-        with connection.cursor() as cursor:
+    with conn:
+        with conn.cursor() as cursor:
             cursor.execute(insert_sql, (file_name, file_full_path, request_time, username))
-        connection.commit()
+        conn.commit()
 
     return {"filename": file.filename,
             "content_type": file.content_type,
@@ -65,45 +65,34 @@ async def create_upload_file(file: UploadFile):
 
 @app.get("/all")
 def all():
-    # DB 연결 SELECT ALL
-    # 결과값 retrun
-    
+    from mnist.db import select
+    sql = "SELECT * FROM image_processing"
+    result = select(query=sql, size=-1)
 
-    connection = pymysql.connect(
-        host="172.18.0.1",
-        user='mnist',
-        password='1234',
-        database='mnistdb',
-        port=int('53306'),
-        cursorclass=pymysql.cursors.DictCursor
-        )
-
-    with connection:
-        with connection.cursor() as cursor:
-            # Read a single record
-            sql = "SELECT * FROM image_processing"
-            cursor.execute(insert_sql, (file_name, file_full_path, request_time, username))
-            result = cursor.fetchall()
-            print(result)
+    return result
 
 @app.get("/one")
 def one():
-    # DB 연결 SELECT 값 중 하나만 리턴
-    # 결과값 retrun
+    from mnist.db import select
+    sql = """
+            SELECT *
+            FROM image_processing
+            WHERE prediction_time IS NULL
+            ORDER BY num
+            LIMIT 1"""
+    result = select(query=sql, size=1)
+    return result[0]
 
+@app.get("/many/")
+def many(size: int = -1):
+    from mnist.db import get_conn
 
-    connection = pymysql.connect(
-        host="172.18.0.1",
-        user='mnist',
-        password='1234',
-        database='mnistdb',
-        port=int('53306'),
-        cursorclass=pymysql.cursors.DictCursor
-        )
-    with connection:    
-        with connection.cursor() as cursor:
-            # Read a single record
-            sql = "SELECT `file_name`, `file_path` FROM image_processing WHERE 'request_time' > '2024-09-20 14:40:05'"
-            cursor.execute(insert_sql, (file_name, file_full_path, request_time, username))
-            result = cursor.fetchall()
-            print(result)
+    sql = "SELECT * FROM image_processing WHERE prediction_time IS NULL ORDER BY num"
+    conn = get_conn()
+
+    with conn:
+        with conn.cursor() as cursor:
+            cursor.execute(sql)
+            result = cursor.fetchmany(size)
+
+    return result
