@@ -1,11 +1,12 @@
 import pymysql.cursors
+import os
 
 def get_conn():
-    conn = pymysql.connect(host="mnist-mariadb",
+    conn = pymysql.connect(host=os.getenv("DB", "localhost"),
                             user='mnist',
                             password='1234',
                             database='mnistdb',
-                            port=3306,
+                            port=int(os.getenv("DB_PORT", "53306")),
                             cursorclass=pymysql.cursors.DictCursor)
 
     return conn

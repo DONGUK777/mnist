@@ -22,7 +22,7 @@ async def create_upload_file(file: UploadFile):
     file_ext = file.content_type.split('/')[-1]
     request_time = jigeum.seoul.now()  # 현재 시간을 포맷팅
     upload_dir = "./image"
-    username = "n00"
+    username = "n03"
 
     if not os.path.exists(upload_dir):
         os.makedirs(upload_dir)
@@ -40,11 +40,11 @@ async def create_upload_file(file: UploadFile):
     # 컬럼 정보 : 예측모델, 예측결과, 예측시간(추후 업데이트)
     
     conn = pymysql.connect(
-        host="mnist-mariadb",
+        host=os.getenv("DB", "localhost"),
         user='mnist',
         password='1234',
         database='mnistdb',
-        port=3306,
+        port=int(os.getenv("DB_PORT", "53306")),
         cursorclass=pymysql.cursors.DictCursor
         )
 
