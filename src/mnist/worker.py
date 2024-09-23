@@ -59,11 +59,10 @@ def run():
   print(jigeum.seoul.now())
 
 def send_line_noti(file_name, presutl):
-    api = "https://notify-api.line.me/api/notify"
-    token = os.getenv('LINE_NOTI_TOKEN', 'NULL')
-    h = {'Authorization':'Bearer ' + token}
-    msg = {
-       "message" : f"{file_name} => {presutl}"
-    }
-    requests.post(api, headers=h , data=msg)
+    KEY = os.environ.get('API_TOKEN')
+    url = "https://notify-api.line.me/api/notify"
+    data = {"message": "성공적으로 저장했습니다!"}
+    headers = {"Authorization": f"{file_name} => {presult}"}
+    response = requests.post(url, data=data, headers=headers)
+
     print("SEND LINE NOTI")
