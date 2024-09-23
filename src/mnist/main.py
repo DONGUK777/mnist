@@ -21,7 +21,7 @@ async def create_upload_file(file: UploadFile):
     file_name = file.filename
     file_ext = file.content_type.split('/')[-1]
     request_time = jigeum.seoul.now()  # 현재 시간을 포맷팅
-    upload_dir = "./image"
+    upload_dir = "/home/ubuntu/images/n03/"
     username = "n03"
 
     if not os.path.exists(upload_dir):

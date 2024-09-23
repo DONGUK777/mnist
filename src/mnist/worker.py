@@ -4,7 +4,7 @@ import random
 
 def get_job_img_task():
     sql = """
-    SELECT run, file_name, file_path
+    SELECT num, file_name, file_path
     FROM image_processing
     WHERE prediction_result IS NULL
     ORDER BY num -- 가장 오래된 요청
@@ -53,11 +53,12 @@ def run():
 
   # STEP 3
   # LINE 으로 처리 결과 전송
-  send_line_noti(file_name, presult)
+  KEY = os.environ.get('LINE_NOTI_TOKEN')
+  url = "https://notify-api.line.me/api/notify"
+  data = {"message": "성공적으로 저장했습니다!"}
+  headers = {"Authorization": f"Bearer {KEY}"}
+  response = requests.post(url, data=data, headers=headers)
 
   print(jigeum.seoul.now())
-
-def sen_line_noti(file_name, presult):
-    api = "https:notify-api.line.me/api/notifiy"
-    token = os.getenv('LINE_NOTI_TOKEN', 'NULL')
-    headers = {'Authorization' : 'Bearer' + token}
+  print(response.text)
+  return True
