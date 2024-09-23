@@ -2,6 +2,7 @@ import jigeum.seoul
 from mnist.db import select, dml
 import random
 import os
+import requests
 
 def get_job_img_task():
     sql = """
@@ -58,11 +59,13 @@ def run():
 
   print(jigeum.seoul.now())
 
-def send_line_noti(file_name, presutl):
-    KEY = os.environ.get('API_TOKEN')
+def send_line_noti():
+    KEY = os.environ.get('LINE_NOTI_TOKEN')
     url = "https://notify-api.line.me/api/notify"
     data = {"message": "성공적으로 저장했습니다!"}
-    headers = {"Authorization": f"{file_name} => {presult}"}
+    headers = {"Authorization": 'Bearer '+KEY}
     response = requests.post(url, data=data, headers=headers)
-
+    print(response.text)
     print("SEND LINE NOTI")
+
+send_line_noti()
