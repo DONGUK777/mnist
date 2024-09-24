@@ -27,7 +27,7 @@ def prediction(file_path, num):
         prediction_time=%s
     WHERE num=%s
     """
-    presult = random.randint(0, 10)
+    presult = random.randint(0, 9)
     dml(sql, str(presult), jigeum.seoul.now(), num)
     
     return presult
