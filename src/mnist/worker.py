@@ -1,4 +1,4 @@
-import jigeum.seoul
+from jigeum.seoul import now
 from mnist.db import select, dml
 import random
 import os
@@ -49,6 +49,7 @@ def preprocess_image(image_path):
     return img
     
 def predict_digit(image_path):
+    model = get_model()
     img = preprocess_image(image_path)
     prediction = model.predict(img)
     digit = np.argmax(prediction)
@@ -57,12 +58,12 @@ def predict_digit(image_path):
 def prediction(file_path, num):
     sql = """UPDATE image_processing
     SET prediction_result=%s,
-        prediction_model='n03',
+        prediction_model=%s,
         prediction_time=%s
     WHERE num=%s
     """
     presult = predict_digit(file_path) 
-    model = get_model()
+    model = 'mnist240924.keras'
     dml(sql, presult, model, now(), num)
     print("예측된 숫자:", presult)
     return presult
@@ -78,7 +79,7 @@ def run():
     job = get_job_img_task()
 
     if job is None:
-        print(f"{jigeum.seoul.now()} - job is None")
+        print(f"{now()} - job is None")
         return 
 
     num = job['num']
@@ -87,18 +88,32 @@ def run():
     
     # STEP 2
     presult = prediction(file_path, num)
-    print(jigeum.seoul.now())
+    #print(jigeum.seoul.now())
     
     # STEP 3
     # LINE 으로 처리 결과 전송
     send_line_noti(file_name, presult)
 
 def send_line_noti(file_name, presult):
-    KEY = os.environ.get('LINE_NOIT_TOKEN')
-    url = "https://notify-api.line.me/api/notify"
-    data = {"message": f"{file_name} -> {presult}"}
-    headers = {"Authorization": "Bearer " + KEY}
-    response = requests.post(url, data=data, headers=headers)
-    print(response.text)
+    api_url = "https://notify-api.line.me/api/notify"
+    token = os.getenv('LINE_NOTI_TOKEN', 'NULL')
+    headers = {'Authorization':'Bearer '+token}
+    print(token)
+    message = {
+            "message": f"{file_name} => {presult}"
+    }
+
+    resp = requests.post(api_url, data=message, headers=headers)
+    
+    print(resp.text)
+
     print("SEND LINE NOTI")
-run()
+
+#def send_line_noti(file_name, presult):
+#    keya = os.getenv('LINE_NOIT_TOKEN', 'NULL')
+#    url = "https://notify-api.line.me/api/notify"
+#    data = {"message": f"{file_name} -> {presult}"}
+#    headers = {'Authorization':'Bearer '+keya}
+#    response = requests.post(url, headers=headers, data=data)
+#    print(response.text)
+#    print("SEND LINE NOTI")
