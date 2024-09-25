@@ -10,8 +10,18 @@ app = FastAPI()
 
 
 @app.post("/files/")
-async def create_file(file: Annotated[bytes, File()]):
-    return {"file_size": len(file)}
+async def file_list():
+    conn = pymysql.connect(host='172.18.0.1', port = 53306,
+                            user = 'mnist', password = '1234',
+                            database = 'mnistdb',
+                            cursorclass=pymysql.cursors.DictCursor)
+    with conn:
+        with conn.cursor() as cursor:
+            sql = "SELECT * FROM image_processing WHERE prediction_time IS NULL ORDER BY num"
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            print(result)
+    return result
 
 
 @app.post("/uploadfile/")
@@ -35,35 +45,20 @@ async def create_upload_file(file: UploadFile):
         f.write(img)
 
 
-    # 파일 저장 경로 DB INSERT
-    # tablename : inage_processing
-    # 컬럼 정보 : num(초기 INSERT, 자동 증가)
-    # 컬럼 정보 : 파일이름, 파일경로, 요청시간(초기 INSERT), 요청사용자(n00)
-    # 컬럼 정보 : 예측모델, 예측결과, 예측시간(추후 업데이트)
-    
-    conn = pymysql.connect(
-        host=os.getenv("DB", "localhost"),
-        user='mnist',
-        password='1234',
-        database='mnistdb',
-        port=int(os.getenv("DB_PORT", "53306")),
-        cursorclass=pymysql.cursors.DictCursor
-        )
+    sql = "INSERT INTO image_processing(file_name, file_path, request_time, request_user) VALUES(%s, %s, %s, %s)"
+    import jigeum.seoul 
+    from mnist.db import dml
 
-    insert_sql = """
-        INSERT INTO image_processing(file_name, file_path, request_time, request_user)
-        VALUES (%s, %s, %s, %s)
-    """
+    insert_row = 0
+    for _ in range(insert_loop):
+        insert_row = dml(sql, file_name, file_full_path, jigeum.seoul.now(), 'n99')
     
-    with conn:
-        with conn.cursor() as cursor:
-            cursor.execute(insert_sql, (file_name, file_full_path, request_time, username))
-        conn.commit()
-
-    return {"filename": file.filename,
+    return {
+            "filename": file.filename,
             "content_type": file.content_type,
-            "file_full_path": file_full_path
-            }
+            "file_full_path": file_full_path,
+            "insert_row_cont": insert_row
+           }
 
 @app.get("/all")
 def all():

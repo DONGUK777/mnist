@@ -27,8 +27,10 @@ def get_job_img_task():
 
 def get_model():
     # 모델 로드
-    model_path = os.getenv('MODEL_PATH', '/home/tommy/code/mnist/note/mnist240924.keras')
-    model = load_model(f'{model_path}')
+    model_path=os.path.dirname(os.path.abspath(__file__))
+    model = load_model(f'{model_path}/mnist240924.keras')
+    #model_path = os.getenv('MODEL_PATH', '/home/tommy/code/mnist/note/mnist240924.keras')
+    #model = load_model(f'{model_path}')
 
     return model
 
@@ -61,7 +63,8 @@ def prediction(file_path, num):
     """
     presult = predict_digit(file_path) 
     model = get_model()
-    dml(sql, presult, now(), num)
+    dml(sql, presult, model, now(), num)
+    print("예측된 숫자:", presult)
     return presult
 
 # image_path = '/home/tommy/code/mnist/note/train_img/2_1.png'
